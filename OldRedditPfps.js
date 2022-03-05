@@ -63,10 +63,10 @@
 
     async function addAvatars (root=document)
     {
-	Array.from(root.querySelectorAll('.thing:not(.morechildren)')).forEach(async(thing)=>{
+		Array.from(root.querySelectorAll('.thing:not(.morechildren)')).forEach(async(thing)=>{
             // Kill myself if unnecessary (mood tbh)
-	    if (!thing) return;
-	    if (thing._hasProfilePicture) return;
+			if (!thing) return;
+			if (thing._hasProfilePicture) return;
             if (!thing.id) return;
             var a;
             if (a = thing.querySelector(`#${thing.id} > .entry > .tagline > .author`)) {} else return;
@@ -79,7 +79,7 @@
             // reference...
             var html =
                 `<div class="reddit-profile-picture">
-                    <a href="${a.href}">
+                    <a class="${a.getAttribute('class')}" href="${a.href}">
                         <img src="${EMBEDDED_PIXEL_IMG}">
                     </a>
                 </div>`;
@@ -89,25 +89,25 @@
             var img = document.querySelector(`#${thing.id} .reddit-profile-picture img`);
 
             // Remember I have a profile picture!
-			thing._hasProfilePicture = true;
+            thing._hasProfilePicture = true;
 
             // Lazy load to load photos on AJAX without
             // further user action
             if (lazyLoadMutations) lazyLoadHandler();
-	});
-    };
-    addAvatars();
+		});
+	};
+	addAvatars();
 
-    var mo = new MutationObserver((muts) =>
+	var mo = new MutationObserver((muts) =>
     {
-	muts.forEach(mut=>{
-		Array.from(mut.addedNodes).forEach(node=>{
-			if (node instanceof HTMLElement) {
-				addAvatars();
-			}
+		muts.forEach(mut=>{
+			Array.from(mut.addedNodes).forEach(node=>{
+				if (node instanceof HTMLElement) {
+					addAvatars();
+				}
+			});
 		});
 	});
-    });
 
     async function startObservation()
     {
