@@ -14,4 +14,4 @@ Forked from [LenAnderson/Reddit-Profile-Pictures](https://github.com/LenAnderson
 
 ## Installation
 
-Use Tampermonkey.
+Install the script into a UserScript manager. The only tested manager as of 2022/03/30 is [Tampermonkey](https://www.tampermonkey.net/). Please make an issue if you have any problems with other managers.
