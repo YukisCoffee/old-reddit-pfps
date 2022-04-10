@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Old Reddit Profile Pictures
-// @version      2.0
+// @version      3.0
 // @description  Show profile pictures on reddit.
 // @author       YukisCoffee
 // @match        https://www.reddit.com/r/*/comments/*
@@ -27,8 +27,11 @@
         // Inject some general CSS to elegantly display
         document.head.insertAdjacentHTML("beforeend",
             `<style>
-                .thing .reddit-profile-picture, .thing .reddit-profile-picture img,
-                .thing .reddit-profile-picture a
+                .reddit-profile-picture a, .reddit-profile-picture a.author::before, .reddit-profile-picture a.author::after {
+                    all: revert;
+                }
+                .reddit-profile-picture, .reddit-profile-picture img,
+                .reddit-profile-picture a
                 {
                     width: 48px;
                     height: 48px;
@@ -36,11 +39,11 @@
                     display: inline-block;
                     transition: all 150ms;
                 }
-                .thing .reddit-profile-picture a
+                .reddit-profile-picture a
                 {
                     background: #ccc;
                 }
-                .thing .reddit-profile-picture
+                .reddit-profile-picture
                 {
                     float: left;
                     margin-right: 7px;
@@ -124,10 +127,19 @@
     async function setProfilePicture(pfpDiv)
     {
         // Return and do nothing if already loaded
-        if (pfpDiv._imgLoaded) return;
+        if (pfpDiv._imgLoaded || pfpDiv._imgRequested) return;
 
         var a = pfpDiv.getElementsByTagName("a")[0];
         var img = a.children[0];
+
+        /*
+         * OPTIMISATION: Prevent request spamming by also remembering
+         * to return on image request, not just upon a successful load.
+         * This prevents lagging in comment sections whenever
+         * reddit's servers slow down (always).
+         */
+        pfpDiv._imgRequested = true;
+
 
         // Request the data if it was not already retrieved.
         // Otherwise, pull it from the registry!
@@ -153,6 +165,7 @@
         img.src = hak.value;
 
         // Remember we already loaded
+        pfpDiv._imgRequested = false;
         pfpDiv._imgLoaded = true;
     }
 
@@ -181,11 +194,20 @@
         }
     }
 
+    function onloadHandler()
+    {
+        // Prevent lazy loading from being fired early.
+        window.addEventListener("resize", lazyLoadHandler);
+        window.addEventListener("click", lazyLoadHandler);
+        window.addEventListener("resize", lazyLoadHandler);
+        window.addEventListener("scroll", lazyLoadHandler);
+
+        // Call the lazy load handler manually to trigger
+        // visible image loading on page load event.
+        lazyLoadHandler();
+    }
+
     // Automatically call lazy load handler on most
     // user interaction
-    window.addEventListener("scroll", lazyLoadHandler);
-    window.addEventListener("load", lazyLoadHandler);
-    window.addEventListener("resize", lazyLoadHandler);
-    window.addEventListener("click", lazyLoadHandler);
-    window.addEventListener("resize", lazyLoadHandler);
+    window.addEventListener("load", onloadHandler);
 })();
