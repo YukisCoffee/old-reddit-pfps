@@ -184,11 +184,20 @@
         }
     }
 
-    // Automatically call lazy load handler on most
-    // user interaction
-    window.addEventListener("scroll", lazyLoadHandler);
-    window.addEventListener("load", lazyLoadHandler);
+    function onloadHandler()
+    {
+        // Prevent lazy loading from being fired early.
     window.addEventListener("resize", lazyLoadHandler);
     window.addEventListener("click", lazyLoadHandler);
     window.addEventListener("resize", lazyLoadHandler);
+        window.addEventListener("scroll", lazyLoadHandler);
+
+        // Call the lazy load handler manually to trigger
+        // visible image loading on page load event.
+        lazyLoadHandler();
+    }
+
+    // Automatically call lazy load handler on most
+    // user interaction
+    window.addEventListener("load", onloadHandler);
 })();
