@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Old Reddit Profile Pictures
-// @version      2.0
+// @version      3.0
 // @description  Show profile pictures on reddit.
 // @author       YukisCoffee
 // @match        https://www.reddit.com/r/*/comments/*
