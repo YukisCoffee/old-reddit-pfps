@@ -27,8 +27,11 @@
         // Inject some general CSS to elegantly display
         document.head.insertAdjacentHTML("beforeend",
             `<style>
-                .thing .reddit-profile-picture, .thing .reddit-profile-picture img,
-                .thing .reddit-profile-picture a
+                .reddit-profile-picture a, .reddit-profile-picture a.author::before, .reddit-profile-picture a.author::after {
+                    all: revert;
+                }
+                .reddit-profile-picture, .reddit-profile-picture img,
+                .reddit-profile-picture a
                 {
                     width: 48px;
                     height: 48px;
@@ -36,11 +39,11 @@
                     display: inline-block;
                     transition: all 150ms;
                 }
-                .thing .reddit-profile-picture a
+                .reddit-profile-picture a
                 {
                     background: #ccc;
                 }
-                .thing .reddit-profile-picture
+                .reddit-profile-picture
                 {
                     float: left;
                     margin-right: 7px;
