@@ -127,10 +127,19 @@
     async function setProfilePicture(pfpDiv)
     {
         // Return and do nothing if already loaded
-        if (pfpDiv._imgLoaded) return;
+        if (pfpDiv._imgLoaded || pfpDiv._imgRequested) return;
 
         var a = pfpDiv.getElementsByTagName("a")[0];
         var img = a.children[0];
+
+        /*
+         * OPTIMISATION: Prevent request spamming by also remembering
+         * to return on image request, not just upon a successful load.
+         * This prevents lagging in comment sections whenever
+         * reddit's servers slow down (always).
+         */
+        pfpDiv._imgRequested = true;
+
 
         // Request the data if it was not already retrieved.
         // Otherwise, pull it from the registry!
@@ -156,6 +165,7 @@
         img.src = hak.value;
 
         // Remember we already loaded
+        pfpDiv._imgRequested = false;
         pfpDiv._imgLoaded = true;
     }
 
@@ -187,9 +197,9 @@
     function onloadHandler()
     {
         // Prevent lazy loading from being fired early.
-    window.addEventListener("resize", lazyLoadHandler);
-    window.addEventListener("click", lazyLoadHandler);
-    window.addEventListener("resize", lazyLoadHandler);
+        window.addEventListener("resize", lazyLoadHandler);
+        window.addEventListener("click", lazyLoadHandler);
+        window.addEventListener("resize", lazyLoadHandler);
         window.addEventListener("scroll", lazyLoadHandler);
 
         // Call the lazy load handler manually to trigger
